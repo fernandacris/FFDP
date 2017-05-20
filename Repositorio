@@ -1,0 +1,113 @@
+#!/bin/bash
+#-------------------------------------------------------------------------
+#------------------------------INSTALAR PACOTES---------------------------
+
+IPAC(){
+INSTALAR=$(dialog							\
+		--stdout						\
+		--title 'Instalação dos Pacotes'			\
+		--gauge 'Instalando...'					\
+		0 0)
+
+apt-get install $INSTALAR
+dialog                                            \
+   --title 'Parabéns'                             \
+   --msgbox 'Instalação finalizada com sucesso.'  \
+   0 0
+GPAC
+}
+
+#------------------------------------------------------------------------
+#---------------------------REMOVER PACOTES------------------------------
+RPAC(){
+REMOVER=$(dialog							\
+		--stdout						\
+		--title 'Remover Pacotes'				\
+		--inputbox 'Remover'					\
+		0 0)
+#dpkg -r
+
+dialog                                            			\
+   --title 'Parabéns'                             			\
+   --msgbox 'Instalação finalizada com sucesso.' 			\
+   6 40
+
+GPAC
+}
+
+#------------------------------------------------------------------------
+#-------------------------ATUALIZAR PACOTES------------------------------
+
+APAC(){
+ATUALIZAR=$(dialog						\
+		--stdout					\
+		--title 'Remover Pacotes'			\
+		--inputbox 'meleca'
+		0 0)
+
+#----------------------------------------------------------------------
+#------------------------SUB MENU PACOTES------------------------------
+
+GPAC(){
+OPCAO=$(dialog							\
+		--stdout					\
+		--title 'Gerenciamento de Pacotes'		\
+		--menu 'Escolha uma opção: '			\
+		0 0 0						\
+		1 'Instalar Pacotes'				\
+		2 'Remover Pacotes'				\
+		3 'Atualizar Pacotes'			 	\
+		4 'Exibir Pacotes'				\
+		5 'Sair')
+
+case $OPCAO in
+	1) IPAC ;;
+	2) RPAC ;;
+	3) APAC ;;
+	4) EPAC ;;
+	5) MENU ;;
+	*)dialog --title 'Opção invalida'			\
+		 --msgbox 'Pressione enter para voltar' 0 0 ; MENU ;;
+esac
+}
+
+#------------------------------------------------------------------------
+#---------------------------MENU PRINCIPAL-------------------------------
+MENU(){		
+OPCAO=$(dialog								\
+		--stdout						\
+		--title 'MENU'						\
+		--menu 'Escolha uma opção: '				\
+		0 0 0							\	
+		1 'Gerenciar Arquivos' 					\
+		2 'Gerenciar Usuarios'				        \
+		3 'Gerenciar Rede'					\
+		4 'Gerenciar Dispositivos'				\
+		5 'Gerenciar Pacotes'					\
+		6 'Sair')
+case $OPCAO in
+	1) GARQ ;;
+	2) GUSR ;;
+	3) GRED ;;
+	4) GDIS ;;
+	5) GPAC ;;
+	6) FIM  ;;
+	*) FIM  ;;
+esac
+}
+		
+#-----------------------------USUARIO E SENHA----------------------------
+USER=""
+PASS=""
+USUARIO=$(dialog							\
+		--stdout						\
+		--title 'Usuário'					\
+		--inputbox 'Digite o nome do seu usuário: '		\
+		0 0)
+
+SENHA=$(dialog								\
+		--stdout						\
+		--title 'Senha'						\
+		--passwordbox 'Digite a sua senha: '			\
+		0 0)
+[ $USUARIO == $USER ] && [ $SENHA == $PASS ] && MENU || FIM
