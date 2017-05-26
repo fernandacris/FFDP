@@ -1,49 +1,66 @@
 #!/bin/bash
+
 #-------------------------------------------------------------------------
 #------------------------------INSTALAR PACOTES---------------------------
 
 IPAC(){
-INSTALAR=$(dialog							\
-		--stdout						\
-		--title 'Instalação dos Pacotes'			\
-		--gauge 'Instalando...'					\
-		0 0)
+INSTALAR=$(dialog --stdout --inputbox 'Digite um pacote' 0 0)
+case $? in 1) GPAC ;; 255) GPAC ;; esac		
 
 apt-get install $INSTALAR
-dialog                                            \
-   --title 'Parabéns'                             \
-   --msgbox 'Instalação finalizada com sucesso.'  \
-   0 0
+
+
+
+
+for i in {1..100}
+do
+	sleep 0.032 &&
+	echo $i
+done | dialog --title 'Instalando... "$INSTALAR"' \ 
+		--guage "$INSTALAR" 10 60			
+
 GPAC
+
+
 }
 
 #------------------------------------------------------------------------
 #---------------------------REMOVER PACOTES------------------------------
-RPAC(){
-REMOVER=$(dialog							\
-		--stdout						\
-		--title 'Remover Pacotes'				\
-		--inputbox 'Remover'					\
-		0 0)
-#dpkg -r
 
-dialog                                            			\
-   --title 'Parabéns'                             			\
-   --msgbox 'Instalação finalizada com sucesso.' 			\
-   6 40
+#RPAC(){
+#REMOVER=$(dialog --stdout --title 'Digite o pacote a ser removido' 0 0)
 
-GPAC
-}
+#case $? in 1) GPAC ;; 255) GPAC ;; esac
+
+#if [ $REMOVER == $INSTALAR ]; then
+#	apt-get remove $REMOVER
+#if [ $? != $INSTALAR ]; then
+#	dialog --msgbox 'Removido!' 0 0
+#fi
+
+#elif [ $REMOVER == $INSTALAR ]; then
+#	apt-get remove $REMOVE
+#	dialog 'Deletado!' 0 0
+#else
+#	dialog 'Não encontrado' 0 0
+#fi
+
+#GPAC
+#}
+
 
 #------------------------------------------------------------------------
 #-------------------------ATUALIZAR PACOTES------------------------------
 
 APAC(){
 ATUALIZAR=$(dialog						\
-		--stdout					\
-		--title 'Remover Pacotes'			\
-		--inputbox 'meleca'
+		--stdout --title 'Atualizar Pacotes'		\
+		--inputbox 
 		0 0)
+apt-get update
+
+GPAC
+}
 
 #----------------------------------------------------------------------
 #------------------------SUB MENU PACOTES------------------------------
@@ -65,38 +82,42 @@ case $OPCAO in
 	2) RPAC ;;
 	3) APAC ;;
 	4) EPAC ;;
-	5) MENU ;;
-	*)dialog --title 'Opção invalida'			\
-		 --msgbox 'Pressione enter para voltar' 0 0 ; MENU ;;
+	*) MENU ;;
+	
 esac
 }
 
-#------------------------------------------------------------------------
-#---------------------------MENU PRINCIPAL-------------------------------
-MENU(){		
-OPCAO=$(dialog								\
-		--stdout						\
-		--title 'MENU'						\
-		--menu 'Escolha uma opção: '				\
-		0 0 0							\	
-		1 'Gerenciar Arquivos' 					\
-		2 'Gerenciar Usuarios'				        \
-		3 'Gerenciar Rede'					\
-		4 'Gerenciar Dispositivos'				\
-		5 'Gerenciar Pacotes'					\
-		6 'Sair')
+#-------------------------------------------------------------------------------
+#---------------------MENU PRINCIPAL--------------------------------------------
+MENU(){
+OPCAO=$(dialog						\
+	--stdout --title 'MENU'				\
+	--menu 'Escolha uma opção do menu: '		\
+	0 0 0						\
+	1 'Gerenciar Arquivos'				\
+	2 'Gerenciar Usuarios'				\
+	3 'Gerenciar Rede'				\
+	4 'Gerenciar Dispositivos'			\
+	5 'Gerenciar Repositorios'			\
+	6 'Sair')
+
 case $OPCAO in
 	1) GARQ ;;
 	2) GUSR ;;
 	3) GRED ;;
 	4) GDIS ;;
 	5) GPAC ;;
-	6) FIM  ;;
+	6) FIM	;;
 	*) FIM  ;;
 esac
 }
-		
-#-----------------------------USUARIO E SENHA----------------------------
+
+#-------------------------------------------------------------------------------
+#----------------------FIM------------------------------------------------------
+FIM(){ dialog --msgbox "Até breve. volte sempre !" 0 0 
+exit 0
+}
+#-----------------------------USUARIO E SENHA------------------------------------
 USER=""
 PASS=""
 USUARIO=$(dialog							\
@@ -104,10 +125,13 @@ USUARIO=$(dialog							\
 		--title 'Usuário'					\
 		--inputbox 'Digite o nome do seu usuário: '		\
 		0 0)
+case $? in 1) FIM ;; 255) FIM ;; esac
 
 SENHA=$(dialog								\
 		--stdout						\
 		--title 'Senha'						\
-		--passwordbox 'Digite a sua senha: '			\
+		--passwordbox 'Digite a sua senha:'			\
 		0 0)
+case $? in 1) FIM ;; 255) FIM ;; esac
 [ $USUARIO == $USER ] && [ $SENHA == $PASS ] && MENU || FIM
+
